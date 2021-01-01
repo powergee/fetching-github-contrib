@@ -6,6 +6,7 @@ import (
 
 const owner = "CSUOS"
 const repo = "KOS"
+const recent = 3
 
 func main() {
 	fmt.Println("Fetching CSUOS/KOS")
@@ -15,8 +16,8 @@ func main() {
 	fmt.Println()
 
 	for i, branch := range branches {
-		fmt.Printf("[Branch #%v: Recent 3 commits of %v]\n", i+1, branch)
-		commits := GetCommits(owner, repo, branch, 3, 1)
+		fmt.Printf("[Branch #%v: Recent %v commits of %v]\n", i+1, recent, branch)
+		commits := GetCommits(owner, repo, branch, recent, 1)
 
 		for j, commit := range commits {
 			fmt.Println("- Message", j+1)
