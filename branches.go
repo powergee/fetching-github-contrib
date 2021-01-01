@@ -1,21 +1,11 @@
 package main
 
-import (
-	"net/http"
-	"io/ioutil"
-	"encoding/json"
-)
-
 func GetBranches(owner string, repo string) []string {
-	res, _ := http.Get(ToRequestURL("repos", owner, repo, "branches"))
-	resBody, _ := ioutil.ReadAll(res.Body)
-	res.Body.Close()
-
-	var parsed []map[string]interface{}
-	json.Unmarshal([]byte(resBody), &parsed)
-	result := make([]string, len(parsed), len(parsed))
+	url := ToRequestURL("repos", owner, repo, "branches")
+	res := GetResponse("GET", url, nil)
+	result := make([]string, len(res), len(res))
 	
-	for index, branch := range parsed {
+	for index, branch := range res {
 		result[index], _ = branch["name"].(string)
 	}
 
