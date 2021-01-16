@@ -1,19 +1,24 @@
 package main
 
 import (
-	"strings"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"strings"
 )
 
 const URL = "https://api.github.com/"
+
+type ProcessedResponse struct {
+	Header 	map[string][]string
+	Body	[]map[string]interface{}
+}
 
 func ToRequestURL(path ...string) string {
 	return URL + strings.Join(path, "/")
 }
 
-func GetResponse(method string, reqUrl string, params map[string]string) []map[string]interface{} {
+func GetResponse(method string, reqUrl string, params map[string]string) ProcessedResponse {
 	req, _ := http.NewRequest(method, reqUrl, nil)
 
 	q := req.URL.Query()
@@ -27,7 +32,13 @@ func GetResponse(method string, reqUrl string, params map[string]string) []map[s
 	resBody, _ := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 
+	bodyString := string(resBody)
+	if bodyString[0] != '[' {
+		bodyString = "[" + bodyString + "]"
+	}
+	
 	var parsed []map[string]interface{}
-	json.Unmarshal([]byte(resBody), &parsed)
-	return parsed
+	json.Unmarshal([]byte(bodyString), &parsed)
+	
+	return ProcessedResponse { res.Header, parsed }
 }

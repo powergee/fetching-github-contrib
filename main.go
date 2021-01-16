@@ -17,6 +17,7 @@ func main() {
 
 	for i, branch := range branches {
 		fmt.Printf("[Branch #%v: Recent %v commits of %v]\n", i+1, recent, branch)
+		fmt.Println("Total count of commits to", branch, ":", CountAllCommits(owner, repo, branch))
 		commits := GetCommits(owner, repo, branch, recent, 1)
 
 		for j, commit := range commits {
